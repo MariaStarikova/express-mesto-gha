@@ -11,12 +11,16 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUsersByTd = (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => res.send({ data: user }))
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        return res
+          .status(404)
+          .send({ message: "Пользователь по указанному _id не найден." });
+      }
+      res.send({ data: user });
+    })
     .catch(() => {
-      res
-        .status(404)
-        .send({ message: "Пользователь по указанному _id не найден." });
       res.status(500).send({
         message: `Произошла ошибка GET запроса по id: ${err.message}`,
       });

@@ -3,8 +3,8 @@
 # Проект Mesto фронтенд + бэкенд (ПР 13)
 
 Бэкенд проекта место.
-Проект написан с использованием технологий:**Express.js, MongoDB, editorconfig**.
-[Ссылка на репозиторий проекта](https://github.com/MariaStarikova/express-mesto-gha.git)
+Проект написан с использованием технологий: **Express.js, MongoDB, editorconfig**.
+[Ссылка на репозиторий проекта](https://github.com/MariaStarikova/express-mesto-gha.git).
 
 ## Директории
 

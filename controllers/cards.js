@@ -13,7 +13,7 @@ module.exports.getCards = (req, res) => {
 module.exports.postCard = (req, res) => {
   const { name, link } = req.body;
 
-  if (!req.body) {
+  if (!name || !link) {
     return res
       .status(400)
       .send({ message: "Переданы некорректные данные при создании карточки." });
@@ -29,7 +29,12 @@ module.exports.postCard = (req, res) => {
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(() => {
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({
+          message: "Переданы некорректные данные при создании карточки.",
+        });
+      }
       res
         .status(500)
         .send({ message: `Произошла ошибка POST запроса: ${err.message}` });

@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const mongoose = require("mongoose");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -10,8 +11,34 @@ module.exports.getUsers = (req, res) => {
     );
 };
 
+// module.exports.getUsersByTd = (req, res) => {
+//   User.findById(req.params.userId)
+//     .then((user) => {
+//       if (!user) {
+//         return res
+//           .status(404)
+//           .send({ message: "Пользователь по указанному _id не найден." });
+//       }
+//       res.send({ data: user });
+//     })
+//     .catch(() => {
+//       res.status(500).send({
+//         message: `Произошла ошибка GET запроса по id: ${err.message}`,
+//       });
+//     });
+// };
+
 module.exports.getUsersByTd = (req, res) => {
-  User.findById(req.params.userId)
+  const userId = req.params.userId;
+
+  console.log(mongoose.Types.ObjectId.isValid(userId));
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res
+      .status(400)
+      .send({ message: "Некорректный формат _id пользователя." });
+  }
+
+  User.findById(userId)
     .then((user) => {
       if (!user) {
         return res
@@ -20,7 +47,7 @@ module.exports.getUsersByTd = (req, res) => {
       }
       res.send({ data: user });
     })
-    .catch(() => {
+    .catch((err) => {
       res.status(500).send({
         message: `Произошла ошибка GET запроса по id: ${err.message}`,
       });

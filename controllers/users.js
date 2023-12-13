@@ -31,7 +31,6 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUsersByTd = (req, res) => {
   const userId = req.params.userId;
 
-  console.log(mongoose.Types.ObjectId.isValid(userId));
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res
       .status(400)

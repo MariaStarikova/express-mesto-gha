@@ -1,4 +1,5 @@
 const Card = require("../models/card");
+const mongoose = require("mongoose");
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -42,7 +43,15 @@ module.exports.postCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.cardId)
+  const cardId = req.params.cardId;
+
+  if (!mongoose.Types.ObjectId.isValid(cardId)) {
+    return res
+      .status(400)
+      .send({ message: "Некорректный формат _id карточки." });
+  }
+
+  Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card) {
         return res

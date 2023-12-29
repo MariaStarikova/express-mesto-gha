@@ -4,11 +4,7 @@ const mongoose = require("mongoose");
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() =>
-      res
-        .status(500)
-        .send({ message: `Произошла ошибка GET запроса: ${err.message}` })
-    );
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка GET запроса: ${err.message}` }));
 };
 
 module.exports.postCard = (req, res) => {
@@ -26,9 +22,9 @@ module.exports.postCard = (req, res) => {
     owner: req.user._id,
   };
 
-  Card.create(newCard)
+  return Card.create(newCard)
     .then((card) => {
-      res.send({ data: card });
+      res.status(201).send({ data: card });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -36,14 +32,14 @@ module.exports.postCard = (req, res) => {
           message: "Переданы некорректные данные при создании карточки.",
         });
       }
-      res
+      return res
         .status(500)
         .send({ message: `Произошла ошибка POST запроса: ${err.message}` });
     });
 };
 
 module.exports.deleteCard = (req, res) => {
-  const cardId = req.params.cardId;
+  const { cardId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     return res
@@ -51,14 +47,14 @@ module.exports.deleteCard = (req, res) => {
       .send({ message: "Некорректный формат _id карточки." });
   }
 
-  Card.findByIdAndDelete(cardId)
+  return Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card) {
         return res
           .status(404)
           .send({ message: "Карточка с указанным _id не найдена." });
       }
-      res.send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => {
       res
@@ -71,7 +67,7 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
@@ -80,7 +76,7 @@ module.exports.likeCard = (req, res) => {
           .send({ message: "Передан несуществующий _id карточки." });
       }
 
-      res.send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -88,7 +84,7 @@ module.exports.likeCard = (req, res) => {
           message: "Переданы некорректные данные для постановки/снятии лайка.",
         });
       }
-      res
+      return res
         .status(500)
         .send({ message: `Произошла ошибка PUT запроса: ${err.message}` });
     });
@@ -98,7 +94,7 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
@@ -107,7 +103,7 @@ module.exports.dislikeCard = (req, res) => {
           .send({ message: "Передан несуществующий _id карточки." });
       }
 
-      res.send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -115,7 +111,7 @@ module.exports.dislikeCard = (req, res) => {
           message: "Переданы некорректные данные для постановки/снятии лайка.",
         });
       }
-      res
+      return res
         .status(500)
         .send({ message: `Произошла ошибка DELETE запроса: ${err.message}` });
     });

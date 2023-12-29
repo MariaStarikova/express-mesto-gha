@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     versionKey: false,
-  }
+  },
 );
 
 userSchema.methods.toJSON = function () {

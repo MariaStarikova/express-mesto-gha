@@ -1,41 +1,15 @@
 const User = require("../models/user");
-const mongoose = require("mongoose");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch(() =>
-      res
-        .status(500)
-        .send({ message: `Произошла ошибка GET запроса: ${err.message}` })
-    );
+    .catch((err) => res
+      .status(500)
+      .send({ message: `Произошла ошибка GET запроса: ${err.message}` }));
 };
 
-// module.exports.getUsersByTd = (req, res) => {
-//   User.findById(req.params.userId)
-//     .then((user) => {
-//       if (!user) {
-//         return res
-//           .status(404)
-//           .send({ message: "Пользователь по указанному _id не найден." });
-//       }
-//       res.send({ data: user });
-//     })
-//     .catch(() => {
-//       res.status(500).send({
-//         message: `Произошла ошибка GET запроса по id: ${err.message}`,
-//       });
-//     });
-// };
-
 module.exports.getUsersByTd = (req, res) => {
-  const userId = req.params.userId;
-
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res
-      .status(400)
-      .send({ message: "Некорректный формат _id пользователя." });
-  }
+  const { userId } = req.params;
 
   User.findById(userId)
     .then((user) => {
@@ -44,10 +18,15 @@ module.exports.getUsersByTd = (req, res) => {
           .status(404)
           .send({ message: "Пользователь по указанному _id не найден." });
       }
-      res.send({ data: user });
+      return res.send({ data: user });
     })
     .catch((err) => {
-      res.status(500).send({
+      if (err.name === "CastError") {
+        return res
+          .status(400)
+          .send({ message: "Некорректный формат _id пользователя." });
+      }
+      return res.status(500).send({
         message: `Произошла ошибка GET запроса по id: ${err.message}`,
       });
     });
@@ -62,15 +41,15 @@ module.exports.postUser = (req, res) => {
     });
   }
 
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+  return User.create({ name, about, avatar })
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({
           message: "Переданы некорректные данные при создании пользователя.",
         });
       }
-      res
+      return res
         .status(500)
         .send({ message: `Произошла ошибка POST запроса: ${err.message}` });
     });
@@ -82,10 +61,15 @@ module.exports.patchUser = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => {
-      res.send({ data: user });
+      if (!user) {
+        return res
+          .status(404)
+          .send({ message: "Пользователь с указанным _id не найден." });
+      }
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -93,10 +77,7 @@ module.exports.patchUser = (req, res) => {
           message: "Переданы некорректные данные при обновлении профиля.",
         });
       }
-      res
-        .status(404)
-        .send({ message: "Пользователь с указанным _id не найден." });
-      res
+      return res
         .status(500)
         .send({ message: `Произошла ошибка PATCH запроса: ${err.message}` });
     });
@@ -108,10 +89,15 @@ module.exports.patchUserAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => {
-      res.send({ data: user });
+      if (!user) {
+        return res
+          .status(404)
+          .send({ message: "Пользователь с указанным _id не найден." });
+      }
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -119,10 +105,7 @@ module.exports.patchUserAvatar = (req, res) => {
           message: "Переданы некорректные данные при обновлении аватара.",
         });
       }
-      res
-        .status(404)
-        .send({ message: "Пользователь с указанным _id не найден." });
-      res
+      return res
         .status(500)
         .send({ message: `Произошла ошибка PATCH запроса: ${err.message}` });
     });

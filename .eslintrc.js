@@ -6,10 +6,10 @@ module.exports = {
   extends: ["eslint:recommended", "airbnb-base"],
   overrides: [
     {
-      files: [".eslintrc.{js,cjs}"],
       env: {
         node: true,
       },
+      files: [".eslintrc.{js,cjs}"],
       parserOptions: {
         sourceType: "script",
       },

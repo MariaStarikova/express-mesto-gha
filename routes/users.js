@@ -13,7 +13,7 @@ const {
 } = require("../middlewares/validationUser");
 
 router.get("/", getUsers);
-router.get("/me", getCurrentUser);
+router.get("/", getCurrentUser);
 router.get("/:userId", validationUserId, getUsersByTd);
 router.patch("/", validationUpdateUser, patchUser);
 router.patch("/me/avatar", validationUpdateAvatar, patchUserAvatar);

@@ -45,7 +45,9 @@ module.exports.createUser = (req, res) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => User.findById(user._id).select("-password").then((userWithoutPassword) => {
+      res.status(201).send({ data: userWithoutPassword });
+    }))
     .catch((err, next) => {
       if (err.code === 11000) {
         const conflictError = new ConflictError("Пользователь с таким email уже существует!");
@@ -72,7 +74,7 @@ module.exports.patchUser = (req, res) => {
         const notFoundError = new NotFoundError("Пользователь с указанным _id не найден.");
         res.status(notFoundError.statusCode).send({ message: notFoundError.message });
       }
-      return res.send({ data: user });
+      return res.status(200).send({ data: user });
     })
     .catch((err, next) => {
       if (err.name === "ValidationError") {
@@ -96,7 +98,7 @@ module.exports.patchUserAvatar = (req, res) => {
         const notFoundError = new NotFoundError("Пользователь с указанным _id не найден.");
         res.status(notFoundError.statusCode).send({ message: notFoundError.message });
       }
-      return res.send({ data: user });
+      return res.status(200).send({ data: user });
     })
     .catch((err, next) => {
       if (err.name === "ValidationError") {
@@ -119,21 +121,14 @@ module.exports.login = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.getCurrentUser = (req, res) => {
-  const { user } = req;
-
-  if (!user) {
-    const notFoundError = new NotFoundError("Пользователь не найден.");
-    return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
-  }
-
-  const token = jwt.sign({ _id: user._id }, "some-secret-key", { expiresIn: "7d" });
-
-  return res.status(200).send({
-    data: {
-      _id: user._id,
-      email: req.body.email,
-    },
-    token,
-  });
+module.exports.getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id).select("-password")
+    .then((user) => {
+      if (!user) {
+        const notFoundError = new NotFoundError("Пользователь не найден.");
+        return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
+      }
+      return res.status(200).send({ data: user });
+    })
+    .catch(next);
 };

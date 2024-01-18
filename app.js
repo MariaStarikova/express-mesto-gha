@@ -10,7 +10,7 @@ const NotFoundError = require("./errors/not-found-err");
 const handlerErrors = require("./middlewares/handlerErrors");
 const { errors } = require("celebrate");
 
- const { PORT = 3000 } = process.env;
+ const { PORT = 2000 } = process.env;
 
 mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
   useNewUrlParser: true,

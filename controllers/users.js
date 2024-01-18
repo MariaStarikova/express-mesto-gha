@@ -81,7 +81,7 @@ module.exports.patchUser = (req, res) => {
         const badRequestError = new BadRequestError("Переданы некорректные данные при обновлении профиля.");
         res.status(badRequestError.statusCode).send({ message: badRequestError.message });
       }
-      next(err);
+      return next(err);
     });
 };
 

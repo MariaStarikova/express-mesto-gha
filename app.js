@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const {
   createUser,
   login,
@@ -13,6 +14,7 @@ const { errors } = require("celebrate");
 const { PORT = 3000 } = process.env;
 
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

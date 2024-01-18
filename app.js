@@ -10,18 +10,18 @@ const NotFoundError = require("./errors/not-found-err");
 const handlerErrors = require("./middlewares/handlerErrors");
 const { errors } = require("celebrate");
 
-// const { PORT = 3000 } = process.env;
-const {
-  PORT = 3000,
-  MONGO_URL = "mongodb://127.0.0.1:27017/mestodb",
-} = process.env;
+ const { PORT = 3000 } = process.env;
+
+mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
+  useNewUrlParser: true,
+}).then(() => {
+  console.log("'соединение с базой установлено");
+})
+  .catch(() => {
+    console.log("'соединение с базой прервано");
+  });
 
 const app = express();
-
-// подключаемся к серверу mongo
-// mongoose.connect("mongodb://localhost:27017/mestodb", {
-//   useNewUrlParser: true,
-// });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -37,33 +37,7 @@ app.use((req, res, next) => {
 });
 app.use(handlerErrors);
 
-// const connectDB = async () => {
-//   try {
-//     const conn = await mongoose.connect("mongodb://localhost:27017/mestodb", {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true,
-//     });
-//     console.log(`MongoDB Connected: ${conn.connection.host}`);
-//   } catch (err) {
-//     console.log(`Error: ${err.message}`);
-//     process.exit(1);
-//   }
-// };
-// connectDB();
-
-async function init() {
-  await mongoose.connect(MONGO_URL, {
-    useNewUrlParser: true,
-  });
-  console.log("'соединение с базой установлено", MONGO_URL);
-
-  await app.listen(PORT);
+app.listen(PORT, () => {
+  // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`);
-}
-
-init();
-
-// app.listen(PORT, () => {
-//   // Если всё работает, консоль покажет, какой порт приложение слушает
-//   console.log(`App listening on port ${PORT}`);
-// });
+});

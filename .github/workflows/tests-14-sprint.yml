@@ -48,6 +48,6 @@ jobs:
     - name: Installing wait-port
       run: npm install -g wait-port@1.0.4
     - name: Run server
-      run: npm run start & wait-port -t 60000 localhost:3000
+      run: npm run start & wait-port -t 30000 [::1]:3000
     - name: Run test endpoints
       run: make proj14-test-endpoints

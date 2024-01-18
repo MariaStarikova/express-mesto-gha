@@ -45,16 +45,7 @@ module.exports.createUser = (req, res) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => {
-      const {
-        _id, name, about, avatar, email,
-      } = user;
-      res.status(201).send({
-        data: {
-          _id, name, about, avatar, email,
-        },
-      });
-    })
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err, next) => {
       if (err.code === 11000) {
         const conflictError = new ConflictError("Пользователь с таким email уже существует!");
@@ -123,7 +114,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, "some-secret-key", { expiresIn: "7d" });
 
-      res.status(201).send({ token });
+      res.status(200).send({ token });
     })
     .catch(next);
 };
@@ -138,10 +129,10 @@ module.exports.getCurrentUser = (req, res) => {
 
   const token = jwt.sign({ _id: user._id }, "some-secret-key", { expiresIn: "7d" });
 
-  return res.status(201).send({
+  return res.status(200).send({
     data: {
       _id: user._id,
-      email: user.email,
+      email: req.body.email,
     },
     token,
   });

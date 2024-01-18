@@ -1,11 +1,14 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const NotFoundError = require("../errors/not-found-err");
+const BadRequestError = require("../errors/bad-request-err");
+const ConflictError = require("../errors/conflict-error");
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => res
-      .status(500)
-      .send({ message: `Произошла ошибка GET запроса: ${err.message}` }));
+    .catch(next);
 };
 
 module.exports.getUsersByTd = (req, res) => {
@@ -14,44 +17,45 @@ module.exports.getUsersByTd = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res
-          .status(404)
-          .send({ message: "Пользователь по указанному _id не найден." });
+        const notFoundError = new NotFoundError("Пользователь с указанным _id не найден.");
+        res.status(notFoundError.statusCode).send({ message: notFoundError.message });
       }
       return res.send({ data: user });
     })
-    .catch((err) => {
+    .catch((err, next) => {
       if (err.name === "CastError") {
-        return res
-          .status(400)
-          .send({ message: "Некорректный формат _id пользователя." });
+        const badRequestError = new BadRequestError("Некорректный формат _id пользователя.");
+        res.status(badRequestError.statusCode).send({ message: badRequestError.message });
+      } else {
+        next(err);
       }
-      return res.status(500).send({
-        message: `Произошла ошибка GET запроса по id: ${err.message}`,
-      });
     });
 };
 
-module.exports.postUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+module.exports.createUser = (req, res) => {
+  const {
+    name, about, avatar,
+  } = req.body;
 
-  if (!name || !about || !avatar) {
-    return res.status(400).send({
-      message: "Переданы некорректные данные при создании пользователя.",
-    });
-  }
-
-  return User.create({ name, about, avatar })
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email: req.body.email,
+      password: hash,
+    }))
     .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(400).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
+    .catch((err, next) => {
+      if (err.code === 11000) {
+        const conflictError = new ConflictError("Пользователь с таким email уже существует!");
+        res.status(conflictError.statusCode).send({ message: conflictError.message });
+      } else if (err.name === "ValidationError") {
+        const badRequestError = new BadRequestError("Переданы некорректные данные при создании пользователя.");
+        res.status(badRequestError.statusCode).send({ message: badRequestError.message });
+      } else {
+        next(err);
       }
-      return res
-        .status(500)
-        .send({ message: `Произошла ошибка POST запроса: ${err.message}` });
     });
 };
 
@@ -65,21 +69,17 @@ module.exports.patchUser = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res
-          .status(404)
-          .send({ message: "Пользователь с указанным _id не найден." });
+        const notFoundError = new NotFoundError("Пользователь с указанным _id не найден.");
+        res.status(notFoundError.statusCode).send({ message: notFoundError.message });
       }
       return res.send({ data: user });
     })
-    .catch((err) => {
+    .catch((err, next) => {
       if (err.name === "ValidationError") {
-        return res.status(400).send({
-          message: "Переданы некорректные данные при обновлении профиля.",
-        });
+        const badRequestError = new BadRequestError("Переданы некорректные данные при обновлении профиля.");
+        res.status(badRequestError.statusCode).send({ message: badRequestError.message });
       }
-      return res
-        .status(500)
-        .send({ message: `Произошла ошибка PATCH запроса: ${err.message}` });
+      next(err);
     });
 };
 
@@ -93,20 +93,47 @@ module.exports.patchUserAvatar = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res
-          .status(404)
-          .send({ message: "Пользователь с указанным _id не найден." });
+        const notFoundError = new NotFoundError("Пользователь с указанным _id не найден.");
+        res.status(notFoundError.statusCode).send({ message: notFoundError.message });
       }
       return res.send({ data: user });
     })
-    .catch((err) => {
+    .catch((err, next) => {
       if (err.name === "ValidationError") {
-        return res.status(400).send({
-          message: "Переданы некорректные данные при обновлении аватара.",
-        });
+        const badRequestError = new BadRequestError("Переданы некорректные данные при обновлении аватара.");
+        res.status(badRequestError.statusCode).send({ message: badRequestError.message });
       }
-      return res
-        .status(500)
-        .send({ message: `Произошла ошибка PATCH запроса: ${err.message}` });
+      next(err);
     });
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, "some-secret-key", { expiresIn: "7d" });
+
+      res.send({ token });
+    })
+    .catch(next);
+};
+
+module.exports.getCurrentUser = (req, res) => {
+  const { user } = req;
+
+  if (!user) {
+    const notFoundError = new NotFoundError("Пользователь не найден.");
+    return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
+  }
+
+  const token = jwt.sign({ _id: user._id }, "some-secret-key", { expiresIn: "7d" });
+
+  return res.send({
+    data: {
+      _id: user._id,
+      email: user.email,
+    },
+    token,
+  });
 };

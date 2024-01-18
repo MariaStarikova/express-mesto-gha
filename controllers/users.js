@@ -34,7 +34,7 @@ module.exports.getUsersByTd = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const {
-    name, about, avatar,
+    name, about, avatar, email,
   } = req.body;
 
   bcrypt.hash(req.body.password, 10)
@@ -42,7 +42,7 @@ module.exports.createUser = (req, res) => {
       name,
       about,
       avatar,
-      email: req.body.email,
+      email,
       password: hash,
     }))
     .then((user) => User.findById(user._id).select("-password").then((userWithoutPassword) => {

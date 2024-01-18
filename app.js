@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/signup", validationUser, createUser);
 app.post("/signin", validationUser, login);
 app.use("/cards", auth, require("./routes/cards"));
-app.use("/users", require("./routes/users"));
+app.use("/users", auth, require("./routes/users"));
 
 app.use(errors());
 app.use((req, res, next) => {
@@ -55,7 +55,7 @@ async function init() {
   await mongoose.connect(MONGO_URL, {
     useNewUrlParser: true,
   });
-  console.log("'соединение с базой установлено'");
+  console.log("'соединение с базой установлено", MONGO_URL);
 
   await app.listen(PORT);
   console.log(`App listening on port ${PORT}`);

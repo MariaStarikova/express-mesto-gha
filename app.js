@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
 const {
   createUser,
   login,
@@ -14,18 +13,17 @@ const { errors } = require("celebrate");
 const { PORT = 3000 } = process.env;
 
 const app = express();
-app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // подключаемся к серверу mongo
-mongoose.connect("mongodb://localhost:27017/mestodb", {
+mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
   useNewUrlParser: true,
 });
 
-app.post("/signin", validationUser, login);
 app.post("/signup", validationUser, createUser);
+app.post("/signin", validationUser, login);
 app.use("/cards", auth, require("./routes/cards"));
 app.use("/users", auth, require("./routes/users"));
 

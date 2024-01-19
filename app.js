@@ -8,7 +8,7 @@ const auth = require("./middlewares/auth");
 const { validationUser } = require("./middlewares/validationUser");
 const NotFoundError = require("./errors/not-found-err");
 const handlerErrors = require("./middlewares/handlerErrors");
-const { errors } = require("celebrate");
+// const { errors } = require("celebrate");
 
  const { PORT = 3000 } = process.env;
 
@@ -31,7 +31,7 @@ app.post("/signin", validationUser, login);
 app.use("/cards", auth, require("./routes/cards"));
 app.use("/users", auth, require("./routes/users"));
 
-app.use(errors());
+// app.use(errors());
 app.use((req, res, next) => {
   next(new NotFoundError("Запрашиваемый маршрут не найден"));
 });

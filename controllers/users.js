@@ -46,17 +46,17 @@ module.exports.createUser = (req, res) => {
       password: hash,
     }))
     .then((user) => User.findById(user._id).select("-password").then((userWithoutPassword) => {
-      res.status(201).send({ data: userWithoutPassword });
+      return res.status(201).send({ data: userWithoutPassword });
     }))
     .catch((err, next) => {
       if (err.code === 11000) {
         const conflictError = new ConflictError("Пользователь с таким email уже существует!");
-        res.status(conflictError.statusCode).send({ message: conflictError.message });
+        return res.status(conflictError.statusCode).send({ message: conflictError.message });
       } else if (err.name === "ValidationError") {
         const badRequestError = new BadRequestError("Переданы некорректные данные при создании пользователя.");
-        res.status(badRequestError.statusCode).send({ message: badRequestError.message });
+        return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
       } else {
-        next(err);
+        return next(err);
       }
     });
 };

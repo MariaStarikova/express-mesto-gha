@@ -80,8 +80,9 @@ module.exports.patchUser = (req, res) => {
       if (err.name === "ValidationError") {
         const badRequestError = new BadRequestError("Переданы некорректные данные при обновлении профиля.");
         res.status(badRequestError.statusCode).send({ message: badRequestError.message });
-      }
+      } else {
       return next(err);
+      }
     });
 };
 
@@ -104,8 +105,9 @@ module.exports.patchUserAvatar = (req, res) => {
       if (err.name === "ValidationError") {
         const badRequestError = new BadRequestError("Переданы некорректные данные при обновлении аватара.");
         res.status(badRequestError.statusCode).send({ message: badRequestError.message });
-      }
+      }  else {
       next(err);
+      }
     });
 };
 

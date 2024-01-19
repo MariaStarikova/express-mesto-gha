@@ -4,7 +4,7 @@
 
 Бэкенд проекта место.
 Проект написан с использованием технологий: **Express.js, MongoDB, editorconfig**.
-Ссылка на репозиторий проекта: https://github.com/MariaStarikova/express-mesto-gha.git
+Ссылка на репозиторий проекта: https://github.com/MariaStarikova/express-mesto-gha/
 
 ## Директории
 

@@ -47,8 +47,6 @@ module.exports.deleteCard = (req, res, next) => {
         const notFoundError = new NotFoundError("Карточка с указанным _id не найдена.");
         return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
       } else if (card.owner.toString() !== userId) {
-        // console.log(card.owner, "owner");
-        // console.log(userId, "user");
         const forbiddenError = new ForbiddenError("У вас нет прав на удаление этой карточки.");
         return res.status(forbiddenError.statusCode).send({ message: forbiddenError.message });
       }

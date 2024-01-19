@@ -72,14 +72,14 @@ module.exports.patchUser = (req, res) => {
     .then((user) => {
       if (!user) {
         const notFoundError = new NotFoundError("Пользователь с указанным _id не найден.");
-        res.status(notFoundError.statusCode).send({ message: notFoundError.message });
+        return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
       }
       return res.status(200).send({ data: user });
     })
     .catch((err, next) => {
       if (err.name === "ValidationError") {
         const badRequestError = new BadRequestError("Переданы некорректные данные при обновлении профиля.");
-        res.status(badRequestError.statusCode).send({ message: badRequestError.message });
+        return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
       } else {
       return next(err);
       }

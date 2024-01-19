@@ -12,15 +12,6 @@ const { errors } = require("celebrate");
 
  const { PORT = 3000 } = process.env;
 
-mongoose.connect("mongodb://localhost:27017/mestodb", {
-  useNewUrlParser: true,
-}).then(() => {
-  console.log("'соединение с базой установлено");
-})
-  .catch(() => {
-    console.log("'соединение с базой прервано");
-  });
-
 const app = express();
 
 app.use(express.json());
@@ -36,6 +27,16 @@ app.use((req, res, next) => {
   next(new NotFoundError("Запрашиваемый маршрут не найден"));
 });
 app.use(handlerErrors);
+
+mongoose.connect("mongodb://localhost:27017/mestodb", {
+  useNewUrlParser: true,
+}).then(() => {
+  console.log("'соединение с базой установлено");
+})
+  .catch(() => {
+    console.log("'соединение с базой прервано");
+    process.exit(1);
+  });
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает

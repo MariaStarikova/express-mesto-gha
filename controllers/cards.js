@@ -66,7 +66,7 @@ module.exports.likeCard = (req, res) => {
     .then((card) => {
       if (!card) {
         const notFoundError = new NotFoundError("Передан несуществующий _id карточки.");
-        res.status(notFoundError.statusCode).send({ message: notFoundError.message });
+        return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
       }
 
       return res.send({ data: card });
@@ -74,7 +74,7 @@ module.exports.likeCard = (req, res) => {
     .catch((err, next) => {
       if (err.name === "CastError") {
         const badRequestError = new BadRequestError("Переданы некорректные данные для постановки/снятии лайка.");
-        res.status(badRequestError.statusCode).send({ message: badRequestError.message });
+        return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
       }
       next(err);
     });

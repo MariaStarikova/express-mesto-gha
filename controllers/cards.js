@@ -45,14 +45,14 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         const notFoundError = new NotFoundError("Карточка с указанным _id не найдена.");
-        res.status(notFoundError.statusCode).send({ message: notFoundError.message });
+        return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
       }
 
       if (card.owner !== userId) {
         const forbiddenError = new ForbiddenError("У вас нет прав на удаление этой карточки.");
-        res.status(forbiddenError.statusCode).send({ message: forbiddenError.message });
+        return res.status(forbiddenError.statusCode).send({ message: forbiddenError.message });
       }
-      return res.send({ data: card });
+      return res.status(200).send({ data: card });
     })
     .catch(next);
 };

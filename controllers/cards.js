@@ -38,17 +38,17 @@ module.exports.deleteCard = (req, res, next) => {
 
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     const badRequestError = new BadRequestError("Некорректный формат _id карточки.");
-    res.status(badRequestError.statusCode).send({ message: badRequestError.message });
+    return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
   }
 
-  return Card.findByIdAndDelete(cardId)
+  Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card) {
         const notFoundError = new NotFoundError("Карточка с указанным _id не найдена.");
         return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
-      }
-
-      if (card.owner !== userId) {
+      } else if (card.owner.toString() !== userId) {
+        // console.log(card.owner, "owner");
+        // console.log(userId, "user");
         const forbiddenError = new ForbiddenError("У вас нет прав на удаление этой карточки.");
         return res.status(forbiddenError.statusCode).send({ message: forbiddenError.message });
       }

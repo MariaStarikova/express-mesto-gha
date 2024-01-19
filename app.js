@@ -19,8 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.post("/signup", validationUser, createUser);
 app.post("/signin", validationUser, login);
-app.use("/cards", auth, require("./routes/cards"));
 app.use("/users", auth, require("./routes/users"));
+app.use("/cards", auth, require("./routes/cards"));
+
 
 app.use(errors());
 app.use((req, res, next) => {

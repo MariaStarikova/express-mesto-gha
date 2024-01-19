@@ -50,4 +50,4 @@ jobs:
     - name: Run server
       run: npm run start & wait-port -t 30000 localhost:3000
     - name: Run test endpoints
-      run: make proj14-test-endpoints
+      run: make proj14-test-endpoints VERBOSE=true

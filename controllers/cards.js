@@ -25,45 +25,17 @@ module.exports.postCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        // const badRequestError = new BadRequestError("Переданы некорректные данные при создании карточки.");
-        // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
         return next(new BadRequestError("Переданы некорректные данные при создании карточки."));
       }
       return next(err);
     });
 };
 
-// module.exports.deleteCard = (req, res, next) => {
-//   const { cardId } = req.params;
-//   const userId = req.user._id;
-
-//   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-//     // const badRequestError = new BadRequestError("Некорректный формат _id карточки.");
-//     // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
-//     return next(new BadRequestError("Некорректный формат _id карточки."));
-//   }
-
-//   Card.findByIdAndDelete(cardId)
-//     .then((card) => {
-//       if (!card) {
-//         const notFoundError = new NotFoundError("Карточка с указанным _id не найдена.");
-//         return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
-//       } else if (card.owner.toString() !== userId) {
-//         const forbiddenError = new ForbiddenError("У вас нет прав на удаление этой карточки.");
-//         return res.status(forbiddenError.statusCode).send({ message: forbiddenError.message });
-//       }
-//       return res.status(200).send({ data: card });
-//     })
-//     .catch(next);
-// };
-
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    // const badRequestError = new BadRequestError("Некорректный формат _id карточки.");
-    // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
     throw new BadRequestError("Некорректный формат _id карточки.");
   }
 
@@ -91,8 +63,6 @@ module.exports.likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        // const notFoundError = new NotFoundError("Передан несуществующий _id карточки.");
-        // return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
         throw new NotFoundError("Передан несуществующий _id карточки.");
       }
 
@@ -100,8 +70,6 @@ module.exports.likeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        // const badRequestError = new BadRequestError("Переданы некорректные данные для постановки/снятии лайка.");
-        // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
         return next(new BadRequestError("Переданы некорректные данные для постановки/снятии лайка."));
       }
       return next(err);
@@ -116,16 +84,12 @@ module.exports.dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        // const notFoundError = new NotFoundError("Передан несуществующий _id карточки.");
-        // return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
         throw new NotFoundError("Передан несуществующий _id карточки.");
       }
       return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        // const badRequestError = new BadRequestError("Переданы некорректные данные для постановки/снятии лайка.");
-        // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
         return next(new BadRequestError("Переданы некорректные данные для постановки/снятии лайка."));
       }
       return next(err);

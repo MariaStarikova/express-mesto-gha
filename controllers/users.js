@@ -15,29 +15,6 @@ module.exports.getUsersByTd = (req, res, next) => {
   const { userId } = req.params;
 
   User.findById(userId)
-//     .then((user) => {
-//       if (!user) {
-//         // const notFoundError = new NotFoundError("Пользователь с указанным _id не найден.");
-//         // return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
-//         return next(new NotFoundError("Пользователь с указанным _id не найден."));
-//       }
-//       return res.send({ data: user });
-//     })
-//     .catch((err, next) => {
-//       console.log(err);
-//       if (err.name === "CastError") {
-//         // console.log("плохой запрос");
-//         // const badRequestError = new BadRequestError("Некорректный формат _id пользователя.");
-//         // return  res.status(badRequestError.statusCode).send({ message: badRequestError.message });
-//         console.log("плохой запрос");
-//         next(new  BadRequestError("Некорректный формат _id пользователя."));
-//         return;
-//       } else {
-//         console.log("зашел в else");
-//         next(err);
-//       }
-//     });
-// };
 .orFail(() => {
   throw new NotFoundError("Пользователь по указанному _id не найден");
 })
@@ -45,8 +22,6 @@ module.exports.getUsersByTd = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         return next(new BadRequestError("Пользователь с некорректным id"));
-        // const badRequestError = new BadRequestError("Пользователь с некорректным id");
-        // return next(badRequestError);
       }
       return next(err);
     });
@@ -70,12 +45,8 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        // const badRequestError = new BadRequestError("Переданы некорректные данные при создании пользователя.");
-        // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
         return next(new BadRequestError("Переданы некорректные данные при создании пользователя."));
       } else if (err.code === 11000) {
-        // const conflictError = new ConflictError("Пользователь с таким email уже существует!");
-        // return res.status(conflictError.statusCode).send({ message: conflictError.message });
         return next(new ConflictError("Пользователь с таким email уже существует!"));
       }  else {
         return next(err);
@@ -93,16 +64,12 @@ module.exports.patchUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        // const notFoundError = new NotFoundError("Пользователь с указанным _id не найден.");
-        // return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
         throw new NotFoundError("Пользователь по указанному _id не найден");
       }
       return res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        // const badRequestError = new BadRequestError("Переданы некорректные данные при обновлении профиля.");
-        // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
         return next(new BadRequestError("Переданы некорректные данные при обновлении пользователя."));
       } else {
         return res.message.send()
@@ -120,16 +87,12 @@ module.exports.patchUserAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        // const notFoundError = new NotFoundError("Пользователь с указанным _id не найден.");
-        // res.status(notFoundError.statusCode).send({ message: notFoundError.message });
         throw new NotFoundError("Пользователь по указанному _id не найден");
       }
       return res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        // const badRequestError = new BadRequestError("Переданы некорректные данные при обновлении аватара.");
-        // res.status(badRequestError.statusCode).send({ message: badRequestError.message });
         return next(new BadRequestError("Переданы некорректные данные при обновлении аватара."));
       }  else {
       return next(err);
@@ -153,8 +116,6 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id).select("-password")
     .then((user) => {
       if (!user) {
-        // const notFoundError = new NotFoundError("Пользователь не найден.");
-        // return res.status(notFoundError.statusCode).send({ message: notFoundError.message });
         throw new NotFoundError("Пользователь не найден");
       }
       return res.status(200).send({ data: user });

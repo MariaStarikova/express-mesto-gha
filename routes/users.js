@@ -12,7 +12,6 @@ const {
   validationUserId,
 } = require("../middlewares/validationUser");
 
-
 router.get("/", getUsers);
 router.get("/me", getCurrentUser);
 router.get("/:userId", validationUserId, getUsersByTd);

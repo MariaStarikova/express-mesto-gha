@@ -10,14 +10,14 @@ const checkUrl = (url) => {
 
 const validationCard = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().custom(checkUrl, "Некорректный формат URL").required(),
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().custom(checkUrl, "Некорректный формат URL"),
   }),
 });
 
 const validationCardId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24).required(),
+    cardId: Joi.string().required().hex().length(24),
   }),
 });
 

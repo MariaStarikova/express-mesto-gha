@@ -8,7 +8,7 @@ const auth = require("./middlewares/auth");
 const { validationUser } = require("./middlewares/validationUser");
 const NotFoundError = require("./errors/not-found-err");
 const handlerErrors = require("./middlewares/handlerErrors");
-const { errors } = require("celebrate");
+// const { errors } = require("celebrate");
 
  const { PORT = 3000 } = process.env;
 
@@ -22,12 +22,12 @@ app.post("/signin", validationUser, login);
 app.use("/users", auth, require("./routes/users"));
 app.use("/cards", auth, require("./routes/cards"));
 
-
-app.use(errors());
 app.use((req, res, next) => {
   next(new NotFoundError("Запрашиваемый маршрут не найден"));
 });
+
 app.use(handlerErrors);
+// app.use(errors());
 
 mongoose.connect("mongodb://localhost:27017/mestodb", {
   useNewUrlParser: true,

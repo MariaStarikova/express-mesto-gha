@@ -45,6 +45,8 @@ module.exports.getUsersByTd = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         return next(new BadRequestError("Пользователь с некорректным id"));
+        // const badRequestError = new BadRequestError("Пользователь с некорректным id");
+        // return next(badRequestError);
       }
       return next(err);
     });
@@ -76,7 +78,7 @@ module.exports.createUser = (req, res, next) => {
         // return res.status(conflictError.statusCode).send({ message: conflictError.message });
         return next(new ConflictError("Пользователь с таким email уже существует!"));
       }  else {
-        next(err);
+        return next(err);
       }
     });
 };

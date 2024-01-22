@@ -29,7 +29,7 @@ module.exports.postCard = (req, res, next) => {
         // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
         return next(new BadRequestError("Переданы некорректные данные при создании карточки."));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -104,7 +104,7 @@ module.exports.likeCard = (req, res, next) => {
         // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
         return next(new BadRequestError("Переданы некорректные данные для постановки/снятии лайка."));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -128,6 +128,6 @@ module.exports.dislikeCard = (req, res, next) => {
         // return res.status(badRequestError.statusCode).send({ message: badRequestError.message });
         return next(new BadRequestError("Переданы некорректные данные для постановки/снятии лайка."));
       }
-      next(err);
+      return next(err);
     });
 };

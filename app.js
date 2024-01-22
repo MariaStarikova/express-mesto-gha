@@ -1,12 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const {
-  createUser,
-  login,
-} = require("./controllers/users");
-const auth = require("./middlewares/auth");
-const { validationUser } = require("./middlewares/validationUser");
-const NotFoundError = require("./errors/not-found-err");
+// const {
+//   createUser,
+//   login,
+// } = require("./controllers/users");
+// const auth = require("./middlewares/auth");
+// const { validationCreateUser, validationLogin } = require("./middlewares/validationUser");
+// const NotFoundError = require("./errors/not-found-err");
+const routers = require("./routes/index");
 const handlerErrors = require("./middlewares/handlerErrors");
 const { errors } = require("celebrate");
 // const joiErrorHandler = require("./middlewares/joi");
@@ -18,18 +19,19 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(routers);
 
 
-app.post("/signup", validationUser, createUser);
-app.post("/signin", validationUser, login);
-app.use("/users", auth, require("./routes/users"));
-app.use("/cards", auth, require("./routes/cards"));
+// app.post("/signup", validationCreateUser, createUser);
+// app.post("/signin", validationLogin, login);
+// app.use("/users", auth, require("./routes/users"));
+// app.use("/cards", auth, require("./routes/cards"));
 
 
 
-app.use((req, res, next) => {
-  next(new NotFoundError("Запрашиваемый маршрут не найден"));
-});
+// app.use((req, res, next) => {
+//   next(new NotFoundError("Запрашиваемый маршрут не найден"));
+// });
 
 // app.use(joiErrorHandler);
 app.use(errors());

@@ -8,7 +8,14 @@ const checkUrl = (url) => {
   return url;
 };
 
-const validationUser = celebrate({
+const validationLogin = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+})
+
+const validationCreateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
@@ -20,25 +27,26 @@ const validationUser = celebrate({
 
 const validationUpdateUser = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
+    about: Joi.string().min(2).max(30).required(),
   }),
 });
 
 const validationUpdateAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().custom(checkUrl, "Некорректный формат URL").required(),
-  }),
+    avatar: Joi.string().custom(checkUrl, "Некорректный формат URL"),
+  }).required(),
 });
 
 const validationUserId = celebrate({
   params: Joi.object().keys({
     userId: Joi.string().hex().length(24).required(),
   }),
-}, { abortEarly: false});
+});
 
 module.exports = {
-  validationUser,
+  validationLogin,
+  validationCreateUser,
   validationUpdateUser,
   validationUpdateAvatar,
   validationUserId,

@@ -51,7 +51,7 @@ userSchema.methods.toJSON = function () {
   return { ...rest, _id };
 };
 
-userSchema.statics.findUserByCredentials = function (email, password, next) {
+userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select("+password")
     .then((user) => {
       if (!user) {
@@ -66,9 +66,7 @@ userSchema.statics.findUserByCredentials = function (email, password, next) {
 
           return user;
         })
-        .catch(next);
     })
-    .catch(next);
 };
 
 module.exports = mongoose.model("user", userSchema);

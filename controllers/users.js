@@ -72,7 +72,7 @@ module.exports.patchUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         return next(new BadRequestError("Переданы некорректные данные при обновлении пользователя."));
       } else {
-        return res.message.send()
+        return next(err);
       }
     });
 };

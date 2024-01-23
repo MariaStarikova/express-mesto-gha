@@ -1,5 +1,4 @@
 const Card = require("../models/card");
-const mongoose = require("mongoose");
 const NotFoundError = require("../errors/not-found-err");
 const BadRequestError = require("../errors/bad-request-err");
 const ForbiddenError = require("../errors/forbidden-err");
@@ -34,10 +33,6 @@ module.exports.postCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   const userId = req.user._id;
-
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    throw new BadRequestError("Некорректный формат _id карточки.");
-  }
 
   Card.findById({ _id: cardId })
     .orFail(() => {

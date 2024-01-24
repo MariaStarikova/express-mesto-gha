@@ -22,7 +22,7 @@ app.use(errors());
 app.use(handlerErrors);
 
 mongoose.connect("mongodb://localhost:27017/mestodb", {
-  useNewUrlParser: true,
+  // useNewUrlParser: true,
   // useUnifiedTopology: true,
 }).then(() => {
   console.log("'соединение с базой установлено");

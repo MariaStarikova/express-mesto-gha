@@ -21,7 +21,7 @@ app.use(errorLogger);
 app.use(errors());
 app.use(handlerErrors);
 
-mongoose.connect("mongodb://127.0.0.1:27017/mestodb/mestodb", {
+mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
   // useNewUrlParser: true,
   // useUnifiedTopology: true,
 }).then(() => {

@@ -27,8 +27,9 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
 }).then(() => {
   console.log("'соединение с базой установлено");
 })
-  .catch(() => {
+  .catch((err) => {
     console.log("V2");
+    console.log(`DB connection error:${err}`);
     console.log("'соединение с базой прервано");
     // process.exit(1);
   });

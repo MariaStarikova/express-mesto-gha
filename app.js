@@ -28,7 +28,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
   console.log("'соединение с базой установлено");
 })
   .catch((err) => {
-    console.log("V2");
+    console.log("V5");
     console.log(`DB connection error:${err}`);
     console.log("'соединение с базой прервано");
     // process.exit(1);

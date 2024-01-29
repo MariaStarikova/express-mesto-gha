@@ -11,10 +11,10 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 const app = express();
 
 const allowedCors = [
-  "https://mstarikova.students.nomoredomainsmonster.ru",
-  "http://mstarikova.students.nomoredomainsmonster.ru",
-  "http://api.mstarikova.students.nomoredomainsmonster.ru",
-  "https://api.mstarikova.students.nomoredomainsmonster.ru",
+  "http://mstar.students.nomoredomainsmonster.ru/",
+  "https://mstar.students.nomoredomainsmonster.ru/",
+  "http://api.mstar.students.nomoredomainsmonster.ru/",
+  "https://api.mstar.students.nomoredomainsmonster.ru/",
   "http://localhost:3000",
   "https://localhost:3000"
 ];

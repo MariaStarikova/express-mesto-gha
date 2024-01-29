@@ -44,7 +44,6 @@ mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
   console.log("'соединение с базой установлено");
 })
   .catch((err) => {
-    console.log("V5");
     console.log(`DB connection error:${err}`);
     console.log("'соединение с базой прервано");
     // process.exit(1);
@@ -52,7 +51,6 @@ mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
-  console.log("V7");
   console.log(`App listening on port ${PORT}`);
 });
 

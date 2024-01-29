@@ -1,5 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
+const cors = require("cors");
 const routers = require("./routes/index");
 const handlerErrors = require("./middlewares/handlerErrors");
 const { errors } = require("celebrate");
@@ -11,47 +13,51 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 const app = express();
 
 const allowedCors = [
-  "http://mstar.students.nomoredomainsmonster.ru/",
-  "https://mstar.students.nomoredomainsmonster.ru/",
-  "http://api.mstar.students.nomoredomainsmonster.ru/",
-  "https://api.mstar.students.nomoredomainsmonster.ru/",
+  "http://mstar.students.nomoredomainsmonster.ru",
+  "https://mstar.students.nomoredomainsmonster.ru",
+  "http://api.mstar.students.nomoredomainsmonster.ru",
+  "https://api.mstar.students.nomoredomainsmonster.ru",
   "http://localhost:3000",
   "https://localhost:3000"
 ];
 
-app.use(function(req, res, next) {
-  const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
-  // проверяем, что источник запроса есть среди разрешённых
+app.options("*", cors(allowedCors));
+app.use(cors(allowedCors));
+app.use(helmet());
 
-  if (allowedCors.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
+// app.use(function(req, res, next) {
+//   const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
+//   // проверяем, что источник запроса есть среди разрешённых
 
-  const { method } = req; // Сохраняем тип запроса (HTTP-метод) в соответствующую переменную
+//   if (allowedCors.includes(origin)) {
+//     res.header("Access-Control-Allow-Origin", origin);
+//   }
 
-  // Значение для заголовка Access-Control-Allow-Methods по умолчанию (разрешены все типы запросов)
-  const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
+//   const { method } = req; // Сохраняем тип запроса (HTTP-метод) в соответствующую переменную
 
-  // сохраняем список заголовков исходного запроса
-  const requestHeaders = req.headers["access-control-request-headers"];
+//   // Значение для заголовка Access-Control-Allow-Methods по умолчанию (разрешены все типы запросов)
+//   const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
+
+//   // сохраняем список заголовков исходного запроса
+//   const requestHeaders = req.headers["access-control-request-headers"];
 
 
 
-  // Если это предварительный запрос, добавляем нужные заголовки
-  if (method === "OPTIONS") {
-    // разрешаем кросс-доменные запросы любых типов (по умолчанию)
-    res.header("Access-Control-Allow-Methods", DEFAULT_ALLOWED_METHODS);
-    // разрешаем кросс-доменные запросы с этими заголовками
-    res.header("Access-Control-Allow-Headers", requestHeaders);
-    console.log("проверка CORS");
-    // завершаем обработку запроса и возвращаем результат клиенту
-    return res.end();
-  }
+//   // Если это предварительный запрос, добавляем нужные заголовки
+//   if (method === "OPTIONS") {
+//     // разрешаем кросс-доменные запросы любых типов (по умолчанию)
+//     res.header("Access-Control-Allow-Methods", DEFAULT_ALLOWED_METHODS);
+//     // разрешаем кросс-доменные запросы с этими заголовками
+//     res.header("Access-Control-Allow-Headers", requestHeaders);
+//     console.log("проверка CORS");
+//     // завершаем обработку запроса и возвращаем результат клиенту
+//     return res.end();
+//   }
 
-  // res.header("Access-Control-Allow-Origin", "*");
+//   // res.header("Access-Control-Allow-Origin", "*");
 
-  return next();
-});
+//   return next();
+// });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

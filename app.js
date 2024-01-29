@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 // const helmet = require("helmet");
-const helmet = require("helmet");
+// const helmet = require("helmet");
 const cors = require("cors");
 const routers = require("./routes/index");
 const handlerErrors = require("./middlewares/handlerErrors");
@@ -22,9 +22,9 @@ const allowedCors = [
   "https://localhost:3000"
 ];
 
-app.options("*", cors(allowedCors));
+// app.options("*", cors(allowedCors));
 app.use(cors(allowedCors));
-app.use(helmet());
+// app.use(helmet());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
